@@ -1,6 +1,6 @@
 {
   "name": "ava-init",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Add AVA to your project",
   "license": "MIT",
   "repository": "sindresorhus/ava-init",
