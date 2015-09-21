@@ -36,7 +36,7 @@ module.exports = function (opts) {
 
 	writePkg.sync(pkgPath, pkg);
 
-	return pify(childProcess.execFile, Promise)('npm', ['install', '--save-dev', 'ava'], {
+	return pify(childProcess.exec, Promise)('npm install --save-dev ava', {
 		cwd: path.dirname(pkgPath)
 	}).then(function () {
 		// for personal use
