@@ -17,8 +17,8 @@ module.exports = function (opts) {
 		cwd: opts.cwd,
 		normalize: false
 	});
-	var pkg = ret.pkg;
-	var pkgPath = ret.path;
+	var pkg = ret.pkg || {};
+	var pkgPath = ret.path || path.resolve(opts.cwd || '', 'package.json');
 	var cli = opts.args || argv();
 	var args = arrExclude(cli, ['--init', '--unicorn']);
 	var cmd = 'ava' + (args.length > 0 ? ' ' + args.join(' ') : '');
