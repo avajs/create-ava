@@ -36,14 +36,17 @@ module.exports = function (opts) {
 
 	writePkg.sync(pkgPath, pkg);
 
-	return pify(childProcess.exec, Promise)('npm install --save-dev ava', {
-		cwd: path.dirname(pkgPath)
-	}).then(function () {
+	var post = function () {
 		// for personal use
 		if (cli.indexOf('--unicorn') !== -1) {
 			var pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 			pkg.devDependencies.ava = '*';
 			writePkg.sync(pkgPath, pkg);
 		}
-	});
+	};
+
+	return opts.skipInstall ? Promise.resolve(post) :
+		pify(childProcess.exec, Promise)('npm install --save-dev ava', {
+			cwd: path.dirname(pkgPath)
+		}).then(post);
 };
