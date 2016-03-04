@@ -6,7 +6,6 @@ var argv = require('the-argv');
 var readPkgUp = require('read-pkg-up');
 var writePkg = require('write-pkg');
 var Promise = require('pinkie-promise');
-var pify = require('pify');
 var arrExclude = require('arr-exclude');
 var DEFAULT_TEST_SCRIPT = 'echo "Error: no test specified" && exit 1';
 
@@ -45,8 +44,24 @@ module.exports = function (opts) {
 		}
 	};
 
-	return opts.skipInstall ? Promise.resolve(post) :
-		pify(childProcess.exec, Promise)('npm install --save-dev ava', {
-			cwd: path.dirname(pkgPath)
-		}).then(post);
+	if (opts.skipInstall) {
+		post();
+		return Promise.resolve();
+	}
+
+	var child = childProcess.spawn('npm', ['install', '--save-dev', 'ava'], {
+		cwd: path.dirname(pkgPath),
+		stdio: 'inherit'
+	});
+
+	return new Promise(function (resolve, reject) {
+		child.on('error', reject);
+		child.on('exit', function (code) {
+			if (code) {
+				reject(new Error('npm command exited with non-zero exit code'));
+			}
+			post();
+			resolve();
+		});
+	});
 };

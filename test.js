@@ -18,12 +18,14 @@ function run(pkg) {
 }
 
 test('empty package.json', t => {
+	process.argv = ['ava', '--init'];
 	return run({}).then(pkg => {
 		t.is(get(pkg, 'scripts.test'), 'ava');
 	});
 });
 
 test('has scripts', t => {
+	process.argv = ['ava', '--init'];
 	return run({
 		scripts: {
 			start: ''
@@ -34,6 +36,7 @@ test('has scripts', t => {
 });
 
 test('has default test', t => {
+	process.argv = ['ava', '--init'];
 	return run({
 		scripts: {
 			test: 'echo "Error: no test specified" && exit 1'
@@ -44,6 +47,7 @@ test('has default test', t => {
 });
 
 test('has only AVA', t => {
+	process.argv = ['ava', '--init'];
 	return run({
 		scripts: {
 			test: 'ava'
@@ -54,6 +58,7 @@ test('has only AVA', t => {
 });
 
 test('has test', t => {
+	process.argv = ['ava', '--init'];
 	return run({
 		scripts: {
 			test: 'foo'
@@ -64,7 +69,7 @@ test('has test', t => {
 });
 
 test('has cli args', t => {
-	process.argv = originalArgv.concat(['--init', '--foo']);
+	process.argv = ['ava', '--init', '--foo'];
 
 	return run({
 		scripts: {
@@ -77,7 +82,7 @@ test('has cli args', t => {
 });
 
 test('has cli args and existing binary', t => {
-	process.argv = originalArgv.concat(['--init', '--foo', '--bar']);
+	process.argv = ['ava', '--init', '--foo', '--bar'];
 
 	return run({
 		scripts: {

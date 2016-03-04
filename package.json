@@ -33,7 +33,6 @@
   ],
   "dependencies": {
     "arr-exclude": "^1.0.0",
-    "pify": "^2.0.0",
     "pinkie-promise": "^2.0.0",
     "read-pkg-up": "^1.0.1",
     "the-argv": "^1.0.0",
