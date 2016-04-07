@@ -100,6 +100,6 @@ test('installs the AVA dependency', t => {
 	return fn({
 		cwd: path.dirname(filepath)
 	}).then(() => {
-		t.ok(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
+		t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
 	});
 });
