@@ -1,4 +1,4 @@
-# ava-init [![Build Status](https://travis-ci.org/sindresorhus/ava-init.svg?branch=master)](https://travis-ci.org/sindresorhus/ava-init)
+# ava-init [![Build Status](https://travis-ci.org/avajs/ava-init.svg?branch=master)](https://travis-ci.org/avajs/ava-init)
 
 > Add [AVA](http://ava.li) to your project
 

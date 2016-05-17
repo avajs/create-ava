@@ -3,7 +3,7 @@
   "version": "0.1.4",
   "description": "Add AVA to your project",
   "license": "MIT",
-  "repository": "sindresorhus/ava-init",
+  "repository": "avajs/ava-init",
   "author": {
     "name": "Sindre Sorhus",
     "email": "sindresorhus@gmail.com",
