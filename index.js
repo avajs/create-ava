@@ -7,6 +7,7 @@ var readPkgUp = require('read-pkg-up');
 var writePkg = require('write-pkg');
 var Promise = require('pinkie-promise');
 var arrExclude = require('arr-exclude');
+
 var DEFAULT_TEST_SCRIPT = 'echo "Error: no test specified" && exit 1';
 
 module.exports = function (opts) {
