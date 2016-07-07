@@ -1,7 +1,7 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
-var childProcess = require('child_process');
+var spawn = require('cross-spawn');
 var argv = require('the-argv');
 var readPkgUp = require('read-pkg-up');
 var writePkg = require('write-pkg');
@@ -50,7 +50,8 @@ module.exports = function (opts) {
 		return Promise.resolve();
 	}
 
-	var child = childProcess.spawn('npm', ['install', '--save-dev', 'ava'], {
+	// TODO: Switch to https://github.com/sindresorhus/execa when we eventually target Node.js >=4
+	var child = spawn('npm', ['install', '--save-dev', 'ava'], {
 		cwd: path.dirname(pkgPath),
 		stdio: 'inherit'
 	});
