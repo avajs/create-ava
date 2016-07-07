@@ -3,7 +3,7 @@ import fs from 'fs';
 import tempWrite from 'temp-write';
 import dotProp from 'dot-prop';
 import test from 'ava';
-import fn from './';
+import m from './';
 
 const originalArgv = process.argv.slice();
 const get = dotProp.get;
@@ -11,95 +11,95 @@ const get = dotProp.get;
 function run(pkg) {
 	const filepath = tempWrite.sync(JSON.stringify(pkg), 'package.json');
 
-	return fn({
+	return m({
 		cwd: path.dirname(filepath),
 		skipInstall: true
 	}).then(() => JSON.parse(fs.readFileSync(filepath, 'utf8')));
 }
 
-test('empty package.json', t => {
+test('empty package.json', async t => {
 	process.argv = ['ava', '--init'];
-	return run({}).then(pkg => {
-		t.is(get(pkg, 'scripts.test'), 'ava');
-	});
+	t.is(get(await run({}), 'scripts.test'), 'ava');
 });
 
-test('has scripts', t => {
+test('has scripts', async t => {
 	process.argv = ['ava', '--init'];
-	return run({
+
+	const pkg = await run({
 		scripts: {
 			start: ''
 		}
-	}).then(pkg => {
-		t.is(get(pkg, 'scripts.test'), 'ava');
 	});
+
+	t.is(get(pkg, 'scripts.test'), 'ava');
 });
 
-test('has default test', t => {
+test('has default test', async t => {
 	process.argv = ['ava', '--init'];
-	return run({
+
+	const pkg = await run({
 		scripts: {
 			test: 'echo "Error: no test specified" && exit 1'
 		}
-	}).then(pkg => {
-		t.is(get(pkg, 'scripts.test'), 'ava');
 	});
+
+	t.is(get(pkg, 'scripts.test'), 'ava');
 });
 
-test('has only AVA', t => {
+test('has only AVA', async t => {
 	process.argv = ['ava', '--init'];
-	return run({
+
+	const pkg = await run({
 		scripts: {
 			test: 'ava'
 		}
-	}).then(pkg => {
-		t.is(get(pkg, 'scripts.test'), 'ava');
 	});
+
+	t.is(get(pkg, 'scripts.test'), 'ava');
 });
 
-test('has test', t => {
+test('has test', async t => {
 	process.argv = ['ava', '--init'];
-	return run({
+
+	const pkg = await run({
 		scripts: {
 			test: 'foo'
 		}
-	}).then(pkg => {
-		t.is(get(pkg, 'scripts.test'), 'foo && ava');
 	});
+
+	t.is(get(pkg, 'scripts.test'), 'foo && ava');
 });
 
-test('has cli args', t => {
+test('has cli args', async t => {
 	process.argv = ['ava', '--init', '--foo'];
 
-	return run({
+	const pkg = await run({
 		scripts: {
 			start: ''
 		}
-	}).then(pkg => {
-		process.argv = originalArgv;
-		t.is(get(pkg, 'scripts.test'), 'ava --foo');
 	});
+
+	process.argv = originalArgv;
+	t.is(get(pkg, 'scripts.test'), 'ava --foo');
 });
 
-test('has cli args and existing binary', t => {
+test('has cli args and existing binary', async t => {
 	process.argv = ['ava', '--init', '--foo', '--bar'];
 
-	return run({
+	const pkg = await run({
 		scripts: {
 			test: 'foo'
 		}
-	}).then(pkg => {
-		process.argv = originalArgv;
-		t.is(get(pkg, 'scripts.test'), 'foo && ava --foo --bar');
 	});
+
+	process.argv = originalArgv;
+	t.is(get(pkg, 'scripts.test'), 'foo && ava --foo --bar');
 });
 
-test('installs the AVA dependency', t => {
+test('installs the AVA dependency', async t => {
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 
-	return fn({
-		cwd: path.dirname(filepath)
-	}).then(() => {
-		t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
-	});
+	await m({cwd: path.dirname(filepath)});
+
+	t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
 });

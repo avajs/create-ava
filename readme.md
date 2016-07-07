@@ -1,6 +1,6 @@
 # ava-init [![Build Status: Linux](https://travis-ci.org/avajs/ava-init.svg?branch=master)](https://travis-ci.org/avajs/ava-init) [![Build status: Windows](https://ci.appveyor.com/api/projects/status/abj17qsw0j1rts7l/branch/master?svg=true)](https://ci.appveyor.com/project/ava/ava-init/branch/master)
 
-> Add [AVA](http://ava.li) to your project
+> Add [AVA](https://ava.li) to your project
 
 
 ## Install
@@ -13,9 +13,9 @@ $ npm install --save ava-init
 ## Usage
 
 ```js
-var avaInit = require('ava-init');
+const avaInit = require('ava-init');
 
-avaInit().then(function () {
+avaInit().then(() => {
 	console.log('done');
 });
 ```
@@ -25,23 +25,23 @@ avaInit().then(function () {
 
 ### avaInit([options])
 
-Returns a promise.
+Returns a `Promise`.
 
 #### options
 
 #### cwd
 
-Type: `string`  
+Type: `string`<br>
 Default: `'.'`
 
 Current working directory.
 
 #### args
 
-Type: `array`  
+Type: `Array`<br>
 Default: CLI arguments *(`process.argv.slice(2)`)*
 
-For instance, with the arguments `['--foo', '--bar']` the following will be put in package.json:
+For instance, with the arguments `['--foo', '--bar']`, the following will be put in package.json:
 
 ```json
 {
@@ -60,4 +60,4 @@ Install AVA globally `$ npm install --global ava` and run `$ ava --init [<option
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)
