@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const execa = require('execa');
+const hasYarn = require('has-yarn');
 const readPkgUp = require('read-pkg-up');
 const writePkg = require('write-pkg');
 const arrExclude = require('arr-exclude');
@@ -17,6 +18,7 @@ module.exports = opts => {
 	});
 	const pkg = ret.pkg || {};
 	const pkgPath = ret.path || path.resolve(opts.cwd || process.cwd(), 'package.json');
+	const pkgCwd = path.dirname(pkgPath);
 	const cli = opts.args || process.argv.slice(2);
 	const args = arrExclude(cli, ['--init', '--unicorn']);
 	const cmd = 'ava' + (args.length > 0 ? ' ' + args.join(' ') : '');
@@ -47,8 +49,12 @@ module.exports = opts => {
 		return Promise.resolve(post);
 	}
 
+	if (hasYarn(pkgCwd)) {
+		return execa('yarn', ['add', '--dev', 'ava'], {cwd: pkgCwd}).then(post);
+	}
+
 	return execa('npm', ['install', '--save-dev', 'ava'], {
-		cwd: path.dirname(pkgPath),
+		cwd: pkgCwd,
 		stdio: 'inherit'
 	}).then(post);
 };
