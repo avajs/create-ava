@@ -6,7 +6,7 @@
 ## Install
 
 ```
-$ npm install --save ava-init
+$ npm install ava-init
 ```
 
 
@@ -32,7 +32,7 @@ Returns a `Promise`.
 #### cwd
 
 Type: `string`<br>
-Default: `'.'`
+Default: `process.cwd()`
 
 Current working directory.
 

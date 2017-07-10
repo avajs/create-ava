@@ -3,7 +3,7 @@ import fs from 'fs';
 import tempWrite from 'temp-write';
 import dotProp from 'dot-prop';
 import test from 'ava';
-import m from './';
+import m from '.';
 
 const originalArgv = process.argv.slice();
 const get = dotProp.get;

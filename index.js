@@ -22,8 +22,10 @@ module.exports = opts => {
 	const cli = opts.args || process.argv.slice(2);
 	const args = arrExclude(cli, ['--init', '--unicorn']);
 	const cmd = 'ava' + (args.length > 0 ? ' ' + args.join(' ') : '');
-	const s = pkg.scripts = pkg.scripts ? pkg.scripts : {};
 
+	pkg.scripts = pkg.scripts ? pkg.scripts : {};
+
+	const s = pkg.scripts;
 	if (s.test && s.test !== DEFAULT_TEST_SCRIPT) {
 		s.test = s.test.replace(/\bnode (test\/)?test\.js\b/, cmd);
 
