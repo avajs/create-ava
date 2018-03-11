@@ -5,7 +5,6 @@ const execa = require('execa');
 const hasYarn = require('has-yarn');
 const readPkgUp = require('read-pkg-up');
 const writePkg = require('write-pkg');
-const arrExclude = require('arr-exclude');
 
 const DEFAULT_TEST_SCRIPT = 'echo "Error: no test specified" && exit 1';
 
@@ -19,8 +18,7 @@ module.exports = opts => {
 	const pkg = ret.pkg || {};
 	const pkgPath = ret.path || path.resolve(opts.cwd || process.cwd(), 'package.json');
 	const pkgCwd = path.dirname(pkgPath);
-	const cli = opts.args || process.argv.slice(2);
-	const args = arrExclude(cli, ['--init', '--unicorn']);
+	const args = opts.args || [];
 	const cmd = 'ava' + (args.length > 0 ? ' ' + args.join(' ') : '');
 
 	pkg.scripts = pkg.scripts ? pkg.scripts : {};
@@ -40,7 +38,7 @@ module.exports = opts => {
 
 	const post = () => {
 		// For personal use
-		if (cli.indexOf('--unicorn') !== -1) {
+		if (opts.unicorn) {
 			const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 			pkg.devDependencies.ava = '*';
 			writePkg.sync(pkgPath, pkg);

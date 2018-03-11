@@ -1,30 +1,28 @@
 import path from 'path';
 import fs from 'fs';
+import execa from 'execa';
 import tempWrite from 'temp-write';
 import dotProp from 'dot-prop';
 import test from 'ava';
 import m from '.';
 
-const originalArgv = process.argv.slice();
 const get = dotProp.get;
 
-function run(pkg) {
+function run(pkg, additionalOpts) {
 	const filepath = tempWrite.sync(JSON.stringify(pkg), 'package.json');
-
-	return m({
+	const opts = Object.assign({
 		cwd: path.dirname(filepath),
 		skipInstall: true
-	}).then(() => JSON.parse(fs.readFileSync(filepath, 'utf8')));
+	}, additionalOpts);
+
+	return m(opts).then(() => JSON.parse(fs.readFileSync(filepath, 'utf8')));
 }
 
 test('empty package.json', async t => {
-	process.argv = ['ava', '--init'];
 	t.is(get(await run({}), 'scripts.test'), 'ava');
 });
 
 test('has scripts', async t => {
-	process.argv = ['ava', '--init'];
-
 	const pkg = await run({
 		scripts: {
 			start: ''
@@ -35,8 +33,6 @@ test('has scripts', async t => {
 });
 
 test('has default test', async t => {
-	process.argv = ['ava', '--init'];
-
 	const pkg = await run({
 		scripts: {
 			test: 'echo "Error: no test specified" && exit 1'
@@ -47,8 +43,6 @@ test('has default test', async t => {
 });
 
 test('has only AVA', async t => {
-	process.argv = ['ava', '--init'];
-
 	const pkg = await run({
 		scripts: {
 			test: 'ava'
@@ -59,8 +53,6 @@ test('has only AVA', async t => {
 });
 
 test('has test', async t => {
-	process.argv = ['ava', '--init'];
-
 	const pkg = await run({
 		scripts: {
 			test: 'foo'
@@ -71,28 +63,26 @@ test('has test', async t => {
 });
 
 test('has cli args', async t => {
-	process.argv = ['ava', '--init', '--foo'];
+	const args = ['--foo'];
 
 	const pkg = await run({
 		scripts: {
 			start: ''
 		}
-	});
+	}, {args});
 
-	process.argv = originalArgv;
 	t.is(get(pkg, 'scripts.test'), 'ava --foo');
 });
 
 test('has cli args and existing binary', async t => {
-	process.argv = ['ava', '--init', '--foo', '--bar'];
+	const args = ['--foo', '--bar'];
 
 	const pkg = await run({
 		scripts: {
 			test: 'foo'
 		}
-	});
+	}, {args});
 
-	process.argv = originalArgv;
 	t.is(get(pkg, 'scripts.test'), 'foo && ava --foo --bar');
 });
 
@@ -110,4 +100,20 @@ test('installs via yarn if there\'s a lockfile', async t => {
 	await m({cwd: path.dirname(yarnLock)});
 
 	t.regex(fs.readFileSync(yarnLock, 'utf8'), /ava/);
+});
+
+test('invokes via cli', async t => {
+	const cliFilepath = path.resolve(__dirname, './cli.js');
+	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
+	await execa(cliFilepath, [], {cwd: path.dirname(filepath)});
+
+	t.is(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'scripts.test'), 'ava');
+});
+
+test('interprets cli arguments', async t => {
+	const cliFilepath = path.resolve(__dirname, './cli.js');
+	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
+	await execa(cliFilepath, ['--foo', '--bar'], {cwd: path.dirname(filepath)});
+
+	t.is(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'scripts.test'), 'ava --foo --bar');
 });
