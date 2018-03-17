@@ -94,6 +94,14 @@ test('installs the AVA dependency', async t => {
 	t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
 });
 
+test('installs AVA@next', async t => {
+	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
+
+	await m({cwd: path.dirname(filepath), next: true});
+
+	t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
+});
+
 test('installs via yarn if there\'s a lockfile', async t => {
 	const yarnLock = tempWrite.sync('', 'yarn.lock');
 

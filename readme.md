@@ -20,7 +20,7 @@ $ npm install @ava/init
 ## Usage
 
 ```js
-const avaInit = require('ava-init');
+const avaInit = require('@ava/init');
 
 avaInit().then(() => {
 	console.log('done');
@@ -58,6 +58,13 @@ For instance, with the arguments `['--foo', '--bar']`, the following will be put
 	}
 }
 ```
+
+#### next
+
+Type: `boolean`<br>
+Default: `false`
+
+Install `ava@next` instead of `ava`.
 
 
 ## License

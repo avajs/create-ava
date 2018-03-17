@@ -18,6 +18,7 @@ module.exports = opts => {
 	const pkg = ret.pkg || {};
 	const pkgPath = ret.path || path.resolve(opts.cwd || process.cwd(), 'package.json');
 	const pkgCwd = path.dirname(pkgPath);
+	const next = Boolean(opts.next) || false;
 	const args = opts.args || [];
 	const cmd = 'ava' + (args.length > 0 ? ' ' + args.join(' ') : '');
 
@@ -49,11 +50,13 @@ module.exports = opts => {
 		return Promise.resolve(post);
 	}
 
+	const avaTag = next ? 'ava@next' : 'ava';
+
 	if (hasYarn(pkgCwd)) {
-		return execa('yarn', ['add', '--dev', 'ava'], {cwd: pkgCwd}).then(post);
+		return execa('yarn', ['add', '--dev', avaTag], {cwd: pkgCwd}).then(post);
 	}
 
-	return execa('npm', ['install', '--save-dev', 'ava'], {
+	return execa('npm', ['install', '--save-dev', avaTag], {
 		cwd: pkgCwd,
 		stdio: 'inherit'
 	}).then(post);
