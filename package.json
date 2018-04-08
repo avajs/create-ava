@@ -10,7 +10,7 @@
 		"url": "sindresorhus.com"
 	},
 	"engines": {
-		"node": ">=4"
+		"node": ">=6.12.3 <7 || >=8.9.4"
 	},
 	"scripts": {
 		"test": "xo && ava"

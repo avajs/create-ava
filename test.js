@@ -6,7 +6,7 @@ import dotProp from 'dot-prop';
 import test from 'ava';
 import m from '.';
 
-const get = dotProp.get;
+const {get} = dotProp;
 
 function run(pkg, additionalOpts) {
 	const filepath = tempWrite.sync(JSON.stringify(pkg), 'package.json');
