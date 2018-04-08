@@ -5,4 +5,3 @@ node_js:
   - '4'
 before_install:
   - npm i -g npm
-  - npm i -g yarn
