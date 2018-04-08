@@ -53,10 +53,19 @@ module.exports = opts => {
 	const avaTag = next ? 'ava@next' : 'ava';
 
 	if (hasYarn(pkgCwd)) {
-		return execa('yarn', ['add', '--dev', avaTag], {cwd: pkgCwd}).then(post);
+		const yarnArgs = ['add', avaTag, '--dev'];
+		if (next) {
+			yarnArgs.push('--exact');
+		}
+		return execa('yarn', yarnArgs, {cwd: pkgCwd}).then(post);
 	}
 
-	return execa('npm', ['install', '--save-dev', avaTag], {
+	const npmArgs = ['install', '--save-dev'];
+	if (next) {
+		npmArgs.push('--save-exact');
+	}
+	npmArgs.push(avaTag);
+	return execa('npm', npmArgs, {
 		cwd: pkgCwd,
 		stdio: 'inherit'
 	}).then(post);

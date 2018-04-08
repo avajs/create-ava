@@ -91,7 +91,9 @@ test('installs the AVA dependency', async t => {
 
 	await m({cwd: path.dirname(filepath)});
 
-	t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
+	const installed = get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava');
+	t.truthy(installed);
+	t.regex(installed, /^\^/);
 });
 
 test('installs AVA@next', async t => {
@@ -99,7 +101,9 @@ test('installs AVA@next', async t => {
 
 	await m({cwd: path.dirname(filepath), next: true});
 
-	t.truthy(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava'));
+	const installed = get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava');
+	t.truthy(installed);
+	t.regex(installed, /^\d/);
 });
 
 test('installs via yarn if there\'s a lockfile', async t => {
@@ -108,6 +112,20 @@ test('installs via yarn if there\'s a lockfile', async t => {
 	await m({cwd: path.dirname(yarnLock)});
 
 	t.regex(fs.readFileSync(yarnLock, 'utf8'), /ava/);
+});
+
+test('installs AVA@next via yarn if there\'s a lockfile', async t => {
+	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
+	const yarnLock = path.join(path.dirname(filepath), 'yarn.lock');
+	fs.writeFileSync(yarnLock, '');
+
+	await m({cwd: path.dirname(yarnLock), next: true});
+
+	t.regex(fs.readFileSync(yarnLock, 'utf8'), /ava/);
+
+	const installed = get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava');
+	t.truthy(installed);
+	t.regex(installed, /^\d/);
 });
 
 test('invokes via cli', async t => {
