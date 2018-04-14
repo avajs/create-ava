@@ -1,29 +1,33 @@
 import path from 'path';
 import fs from 'fs';
+
+import test from 'ava';
+import dotProp from 'dot-prop';
 import execa from 'execa';
 import tempWrite from 'temp-write';
-import dotProp from 'dot-prop';
-import test from 'ava';
-import m from '.';
+
+import createAva from '.';
 
 const {get} = dotProp;
 
-function run(pkg, additionalOpts) {
+async function runWithoutInstall(pkg, additionalOpts) {
 	const filepath = tempWrite.sync(JSON.stringify(pkg), 'package.json');
+
 	const opts = Object.assign({
 		cwd: path.dirname(filepath),
 		skipInstall: true
 	}, additionalOpts);
 
-	return m(opts).then(() => JSON.parse(fs.readFileSync(filepath, 'utf8')));
+	await createAva(opts);
+	return JSON.parse(fs.readFileSync(filepath, 'utf8'));
 }
 
 test('empty package.json', async t => {
-	t.is(get(await run({}), 'scripts.test'), 'ava');
+	t.is(get(await runWithoutInstall({}), 'scripts.test'), 'ava');
 });
 
 test('has scripts', async t => {
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			start: ''
 		}
@@ -33,7 +37,7 @@ test('has scripts', async t => {
 });
 
 test('has default test', async t => {
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			test: 'echo "Error: no test specified" && exit 1'
 		}
@@ -43,7 +47,7 @@ test('has default test', async t => {
 });
 
 test('has only AVA', async t => {
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			test: 'ava'
 		}
@@ -53,7 +57,7 @@ test('has only AVA', async t => {
 });
 
 test('has test', async t => {
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			test: 'foo'
 		}
@@ -65,7 +69,7 @@ test('has test', async t => {
 test('has cli args', async t => {
 	const args = ['--foo'];
 
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			start: ''
 		}
@@ -77,7 +81,7 @@ test('has cli args', async t => {
 test('has cli args and existing binary', async t => {
 	const args = ['--foo', '--bar'];
 
-	const pkg = await run({
+	const pkg = await runWithoutInstall({
 		scripts: {
 			test: 'foo'
 		}
@@ -86,40 +90,40 @@ test('has cli args and existing binary', async t => {
 	t.is(get(pkg, 'scripts.test'), 'foo && ava --foo --bar');
 });
 
-test('installs the AVA dependency', async t => {
+test.serial('installs the AVA dependency', async t => {
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 
-	await m({cwd: path.dirname(filepath)});
+	await createAva({cwd: path.dirname(filepath)});
 
 	const installed = get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava');
 	t.truthy(installed);
 	t.regex(installed, /^\^/);
 });
 
-test('installs AVA@next', async t => {
+test.serial('installs AVA@next', async t => {
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 
-	await m({cwd: path.dirname(filepath), next: true});
+	await createAva({cwd: path.dirname(filepath), next: true});
 
 	const installed = get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'devDependencies.ava');
 	t.truthy(installed);
 	t.regex(installed, /^\d/);
 });
 
-test('installs via yarn if there\'s a lockfile', async t => {
+test.serial('installs via yarn if there\'s a lockfile', async t => {
 	const yarnLock = tempWrite.sync('', 'yarn.lock');
 
-	await m({cwd: path.dirname(yarnLock)});
+	await createAva({cwd: path.dirname(yarnLock)});
 
 	t.regex(fs.readFileSync(yarnLock, 'utf8'), /ava/);
 });
 
-test('installs AVA@next via yarn if there\'s a lockfile', async t => {
+test.serial('installs AVA@next via yarn if there\'s a lockfile', async t => {
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 	const yarnLock = path.join(path.dirname(filepath), 'yarn.lock');
 	fs.writeFileSync(yarnLock, '');
 
-	await m({cwd: path.dirname(yarnLock), next: true});
+	await createAva({cwd: path.dirname(yarnLock), next: true});
 
 	t.regex(fs.readFileSync(yarnLock, 'utf8'), /ava/);
 
@@ -128,7 +132,7 @@ test('installs AVA@next via yarn if there\'s a lockfile', async t => {
 	t.regex(installed, /^\d/);
 });
 
-test('invokes via cli', async t => {
+test.serial('invokes via cli', async t => {
 	const cliFilepath = path.resolve(__dirname, './cli.js');
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 	await execa(cliFilepath, [], {cwd: path.dirname(filepath)});
@@ -136,7 +140,7 @@ test('invokes via cli', async t => {
 	t.is(get(JSON.parse(fs.readFileSync(filepath, 'utf8')), 'scripts.test'), 'ava');
 });
 
-test('interprets cli arguments', async t => {
+test.serial('interprets cli arguments', async t => {
 	const cliFilepath = path.resolve(__dirname, './cli.js');
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 	await execa(cliFilepath, ['--foo', '--bar'], {cwd: path.dirname(filepath)});
