@@ -1,4 +1,4 @@
-# create-ava [![Build Status: Linux](https://travis-ci.org/avajs/ava-init.svg?branch=master)](https://travis-ci.org/avajs/ava-init) [![Build status: Windows](https://ci.appveyor.com/api/projects/status/abj17qsw0j1rts7l/branch/master?svg=true)](https://ci.appveyor.com/project/ava/ava-init/branch/master)
+# create-ava [![Build Status: Linux](https://travis-ci.org/avajs/create-ava.svg?branch=master)](https://travis-ci.org/avajs/create-ava) [![Build status: Windows](https://ci.appveyor.com/api/projects/status/abj17qsw0j1rts7l/branch/master?svg=true)](https://ci.appveyor.com/project/ava/create-ava/branch/master)
 
 > Add [AVA](https://ava.li) to your project
 
