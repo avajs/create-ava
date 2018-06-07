@@ -90,6 +90,20 @@ test('has cli args and existing binary', async t => {
 	t.is(get(pkg, 'scripts.test'), 'foo && ava --foo --bar');
 });
 
+test('does not remove empty dependency properties', async t => {
+	const pkg = await runWithoutInstall({
+		dependencies: {},
+		devDependencies: {},
+		optionalDependencies: {},
+		peerDependencies: {}
+	});
+
+	t.truthy(get(pkg, 'dependencies'));
+	t.truthy(get(pkg, 'devDependencies'));
+	t.truthy(get(pkg, 'optionalDependencies'));
+	t.truthy(get(pkg, 'peerDependencies'));
+});
+
 test.serial('installs the AVA dependency', async t => {
 	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 

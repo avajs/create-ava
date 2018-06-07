@@ -35,14 +35,14 @@ module.exports = opts => {
 		s.test = cmd;
 	}
 
-	writePkg.sync(pkgPath, pkg);
+	writePkg.sync(pkgPath, pkg, {normalize: false});
 
 	const post = () => {
 		// For personal use
 		if (opts.unicorn) {
 			const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
 			pkg.devDependencies.ava = '*';
-			writePkg.sync(pkgPath, pkg);
+			writePkg.sync(pkgPath, pkg, {normalize: false});
 		}
 	};
 
