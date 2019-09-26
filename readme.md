@@ -6,35 +6,33 @@
 ## CLI
 
 ```
-$ npx create-ava [<options>]
-```
-
-
-## Install
-
-```
-$ npm install create-ava
-```
-
-
-## Usage
-
-```js
-const createAva = require('create-ava');
-
-createAva().then(() => {
-	console.log('done');
-});
+$ npm init ava [options]
 ```
 
 
 ## API
 
-### createAva([options])
+```
+$ npm install create-ava
+```
+
+### Usage
+
+```js
+const createAva = require('create-ava');
+
+(async () => {
+	await createAva();
+})();
+```
+
+### createAva(options?)
 
 Returns a `Promise`.
 
 #### options
+
+Type: `object`
 
 #### cwd
 
@@ -45,7 +43,7 @@ Current working directory.
 
 #### args
 
-Type: `Array`<br>
+Type: `string[]`<br>
 Default: CLI arguments *(`process.argv.slice(2)`)*
 
 For instance, with the arguments `['--foo', '--bar']`, the following will be put in package.json:
@@ -65,8 +63,3 @@ Type: `boolean`<br>
 Default: `false`
 
 Install `ava@next` instead of `ava`.
-
-
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)

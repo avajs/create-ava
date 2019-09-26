@@ -1,26 +1,24 @@
 import path from 'path';
 import fs from 'fs';
-
 import test from 'ava';
 import dotProp from 'dot-prop';
 import execa from 'execa';
 import tempWrite from 'temp-write';
-
 import createAva from '.';
 
 const {get} = dotProp;
 
-async function runWithoutInstall(pkg, additionalOpts) {
-	const filepath = tempWrite.sync(JSON.stringify(pkg), 'package.json');
+const runWithoutInstall = async (packageJson, additionalOptions) => {
+	const filePath = tempWrite.sync(JSON.stringify(packageJson), 'package.json');
 
-	const opts = Object.assign({
-		cwd: path.dirname(filepath),
-		skipInstall: true
-	}, additionalOpts);
+	await createAva({
+		cwd: path.dirname(filePath),
+		skipInstall: true,
+		...additionalOptions
+	});
 
-	await createAva(opts);
-	return JSON.parse(fs.readFileSync(filepath, 'utf8'));
-}
+	return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+};
 
 test('empty package.json', async t => {
 	t.is(get(await runWithoutInstall({}), 'scripts.test'), 'ava');
