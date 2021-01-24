@@ -1,14 +1,12 @@
-# create-ava [![Build Status: Linux](https://travis-ci.org/avajs/create-ava.svg?branch=master)](https://travis-ci.org/avajs/create-ava) [![Build status: Windows](https://ci.appveyor.com/api/projects/status/abj17qsw0j1rts7l/branch/master?svg=true)](https://ci.appveyor.com/project/ava/create-ava/branch/master)
+# create-ava
 
-> Add [AVA](https://ava.li) to your project
-
+> Add [AVA](https://avajs.dev) to your project
 
 ## CLI
 
 ```
 $ npm init ava [options]
 ```
-
 
 ## API
 
@@ -36,14 +34,14 @@ Type: `object`
 
 #### cwd
 
-Type: `string`<br>
+Type: `string`\
 Default: `process.cwd()`
 
 Current working directory.
 
 #### args
 
-Type: `string[]`<br>
+Type: `string[]`\
 Default: CLI arguments *(`process.argv.slice(2)`)*
 
 For instance, with the arguments `['--foo', '--bar']`, the following will be put in package.json:
@@ -59,7 +57,7 @@ For instance, with the arguments `['--foo', '--bar']`, the following will be put
 
 #### next
 
-Type: `boolean`<br>
+Type: `boolean`\
 Default: `false`
 
 Install `ava@next` instead of `ava`.
